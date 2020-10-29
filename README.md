@@ -1,6 +1,6 @@
 # boxdraw
 
-Convert simple ascii grid drawings to unicode 'box-drawing' characters
+Convert simple ascii grid drawings to unicode 'box-drawing' characters:
 
 ```
 npm install -g boxdraw
@@ -8,7 +8,7 @@ boxdraw <<-EOF
 > +-+
 > | |
 > +-+
->EOF
+> EOF
 ┌─┐
 │ │
 └─┘
@@ -17,7 +17,7 @@ boxdraw <<-EOF
 ```
 git clone git@github.com:evnp/boxdraw.git
 cd boxdraw
-npm run main
+npm run demo
 ```
 
 ![boxdraw demo](https://raw.githubusercontent.com/evnp/boxdraw/main/boxdraw.png "boxdraw demo")
