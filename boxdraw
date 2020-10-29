@@ -1,0 +1,128 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+function boxdraw() {
+	local margin="${1:-0}"
+	local marginchars=""
+	if (( margin > 0 )); then
+		for (( i=0 ; i < margin ; i++ )); do
+			echo
+			marginchars+=" "
+		done
+	fi
+
+	local style="${2:-0}"
+	if [[ "${style}" == 'light' ]]; then
+		style=0
+	elif [[ "${style}" == 'bold' ]]; then
+		style=1
+	elif [[ "${style}" == 'double' ]]; then
+		style=2
+	elif [[ "${style}" =~ ^[012]$ ]]; then
+		style=0
+	fi
+
+	local nesw="┼╋╬"
+	local nes_="├┣╠"
+	local ne_w="┴┻╩"
+	local ne__="└┗╚"
+	local n_sw="┤┫╣"
+	local n_s_="│┃║"
+	local n__w="┘┛╝"
+	local n___="╵╹║"
+	local _esw="┬┳╦"
+	local _es_="┌┏╔"
+	local _e_w="─━═"
+	local _e__="╶╺═"
+	local __sw="┐┓╗"
+	local __s_="╷╻║"
+	local ___w="╴╸═"
+	local ____="···"
+
+	local boxchar boxcharset boxcharsetidx boxcharsetvarname
+	local boxcharsets=(
+		"${nesw}"
+		"${nes_}"
+		"${ne_w}"
+		"${ne__}"
+		"${n_sw}"
+		"${n_s_}"
+		"${n__w}"
+		"${n___}"
+		"${_esw}"
+		"${_es_}"
+		"${_e_w}"
+		"${_e__}"
+		"${__sw}"
+		"${__s_}"
+		"${___w}"
+		"${____}"
+	)
+
+	local prev next dest curr currchar h i j n e s w
+
+	curr=1  # start loop
+
+	while [[ -n "${next:-}" || -n "${curr:-}" ]]; do
+		[[ "${curr}" != 1 ]] && prev="${curr:-}"
+		curr="${next:-}"
+
+		IFS= read next || true  # don't exit once we read empty line
+
+		if [[ -n "${curr}" ]]; then
+			dest=""
+			for (( i=0 ; i < "${#curr}" ; i++ )); do
+				h=$(( i - 1 ))
+				j=$(( i + 1 ))
+				currchar="${curr:${i}:1}"
+
+				if [[ -n "$( charoneof "${currchar}" '|' + - │ ─ )" ]]; then
+					n=_ ; [[ -n "${prev}" && -n "$( charoneof "${prev:${i}:1}" '|' +   │   ┼ ┤ ├   ┬ )" ]] && n=n
+					e=_ ; [[ -n "${curr}" && -n "$( charoneof "${curr:${j}:1}"     + -   ─ ┼ ┤   ┴ ┬ )" ]] && e=e
+					s=_ ; [[ -n "${next}" && -n "$( charoneof "${next:${i}:1}" '|' +   │   ┼ ┤ ├ ┴   )" ]] && s=s
+					w=_ ; [[ -n "${curr}" && -n "$( charoneof "${curr:${h}:1}"     + -   ─ ┼   ├ ┴ ┬ )" ]] && w=w
+					(( h < 0 )) && w=_
+					boxcharsetvarname="${n}${e}${s}${w}"
+					boxcharset="${!boxcharsetvarname}"
+					boxchar="${boxcharset:${style}:1}"
+				else
+					boxchar="${currchar}"
+					for (( boxcharsetidx=0 ; boxcharsetidx < ${#boxcharsets[@]} ; boxcharsetidx++ )); do
+						boxcharset="${boxcharsets[${boxcharsetidx}]}"
+						if [[ "${boxchar}" == "${boxcharset:0:1}" ]]; then
+							boxchar="${boxcharset:${style}:1}"
+							break
+						fi
+					done
+				fi
+				dest+="${boxchar}"
+			done
+			echo "${marginchars}${dest}${marginchars}"
+		else
+			echo
+		fi
+	done
+
+	if (( margin > 0 )); then
+		for (( i=0 ; i < margin ; i++ )); do echo; done
+	fi
+}
+
+function charoneof() {
+	local char="$1"
+	shift
+	local oneof=( "$@" )
+	local i
+
+	for (( i=0 ; i < "${#oneof[@]}" ; i++ )); do
+		if [[ "${char}" == "${oneof[${i}]}" ]]; then
+			echo 1
+			break
+		fi
+	done
+
+	return 0
+}
+
+boxdraw "$@"
