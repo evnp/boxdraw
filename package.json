@@ -1,6 +1,6 @@
 {
   "name": "boxdraw",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "convert simple ascii grid drawings to unicode 'box-drawing' characters",
   "main": "boxdraw",
   "bin": "boxdraw",
@@ -9,6 +9,9 @@
   },
   "homepage": "https://github.com/evnp/boxdraw",
   "repository": "https://github.com/evnp/boxdraw",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "author": "Evan Purcer <evanpurcer@gmail.com> (http://evnp.ca)",
   "license": "MIT"
 }
