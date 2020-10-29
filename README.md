@@ -2,19 +2,19 @@
 
 Convert simple ascii grid drawings to unicode 'box-drawing' characters:
 
-```
+```sh
 npm install -g boxdraw
-boxdraw <<-EOF
-> +-+
+./boxdraw <<-EOF          # PRESS ENTER
+> +-+                     # PASTE INPUT
 > | |
 > +-+
-> EOF
-┌─┐
+> EOF                     # ENTER "EOF"
+┌─┐                       # PRESS ENTER
 │ │
 └─┘
 ```
 
-```
+```sh
 git clone git@github.com:evnp/boxdraw.git
 cd boxdraw
 npm run demo
@@ -24,23 +24,23 @@ npm run demo
 
 ### Run on file input
 
-```
+```sh
 cd boxdraw
 ./boxdraw < inputfile.txt
 ```
 
 ### Run on pasted input
 
-```
+```sh
 cd boxdraw
-./boxdraw <<-EOF    <PRESS ENTER>
-> +-+---+           <PASTE INPUT>
+./boxdraw <<-EOF          # PRESS ENTER
+> +-+---+                 # PASTE INPUT
 > | |   |
 > +-+-+ |
 > | | | |
 > +-+-+-+
-> EOF               <ENTER "EOF">
-                    <PRESS ENTER>
+> EOF                     # ENTER "EOF"
+                          # PRESS ENTER
 ┌─┬───┐
 │ │   │
 ├─┼─┐ │
@@ -57,7 +57,7 @@ http://asciiflow.com/
 
 Margins:
 
-```
+```sh
 ./boxdraw 3 <<-EOF
 > +-+---+
 > | |   |
@@ -82,7 +82,7 @@ Margins:
 
 Line style:
 
-```
+```sh
 ./boxdraw 0 bold <<-EOF
 > +-+---+
 > | |   |
