@@ -3,15 +3,54 @@
 set -euo pipefail
 
 function boxdraw() {
+
+	# if no stdin was provided, print help text:
+	if [[ -t 0 ]]; then
+		cat <<-EOF
+
+		Usage:
+
+		  boxdraw <<-EOF    # PRESS ENTER
+		  > +-+             # PASTE INPUT
+		  > +-+
+		  > EOF             # ENTER "EOF"
+		  ┌─┐               # PRESS ENTER
+		  └─┘
+
+		  OR
+
+		  boxdraw < inputfile.txt
+
+		Options:
+
+		  boxdraw 8 < inputfile.txt         # Draw with margin of 8 lines/spaces
+		  boxdraw 0 bold < inputfile.txt    # Draw with bold "box-drawing" characters
+		  boxdraw 2 double < inputfile.txt  # Draw with double-line "box-drawing" characters AND margin of 2 lines/spaces
+
+		More information:
+
+		  https://github.com/evnp/boxdraw
+		  https://en.wikipedia.org/wiki/Box-drawing_character
+
+		EOF
+		exit 1
+	fi
+
+	# first arg : margin (integer, optional) - define space around drawing
 	local margin="${1:-0}"
 	local marginchars=""
+	local marginidx
 	if (( margin > 0 )); then
-		for (( i=0 ; i < margin ; i++ )); do
-			echo
-			marginchars+=" "
+		for (( marginidx=0 ; marginidx < margin ; marginidx++ )); do
+			echo             # print top margin
+			marginchars+=" " # calc string to be used for left margin
 		done
 	fi
 
+	# second arg : style (integer or string enum [ light bold double ], optional)
+	# 0 / light  - use thin-lined box-drawing characters
+	# 1 / bold   - use thick-lined box-drawing characters
+	# 2 / double - use double-lined box-drawing characters
 	local style="${2:-0}"
 	if [[ "${style}" == 'light' ]]; then
 		style=0
@@ -23,6 +62,7 @@ function boxdraw() {
 		style=0
 	fi
 
+	# box-drawing character sets, indexed by cardinal directions:
 	local nesw="┼╋╬"
 	local nes_="├┣╠"
 	local ne_w="┴┻╩"
@@ -40,6 +80,7 @@ function boxdraw() {
 	local ___w="╴╸═"
 	local ____="···"
 
+	# other box-drawing charset management vars:
 	local boxchar boxcharset boxcharsetidx boxcharsetvarname
 	local boxcharsets=(
 		"${nesw}"
@@ -60,34 +101,42 @@ function boxdraw() {
 		"${____}"
 	)
 
-	local prev next dest curr currchar h i j n e s w
+	# line vars : current line, prev line, next line, output line:
+	local curr prev next dest
 
-	curr=1  # start loop
+	# char vars : char index ; idx plus 1 ; idx minus 1 ; current char
+	local charidx charip1 charim1 curchar
+
+	# cardinal directions : north, south, east, west
+	local n e s w
+
+	# start loop (bash has no do-while):
+	curr=1
 
 	while [[ -n "${next:-}" || -n "${curr:-}" ]]; do
 		[[ "${curr}" != 1 ]] && prev="${curr:-}"
 		curr="${next:-}"
 
-		IFS= read next || true  # don't exit once we read empty line
+		IFS= read -r next || true  # don't exit once we read empty line
 
 		if [[ -n "${curr}" ]]; then
 			dest=""
-			for (( i=0 ; i < "${#curr}" ; i++ )); do
-				h=$(( i - 1 ))
-				j=$(( i + 1 ))
-				currchar="${curr:${i}:1}"
+			for (( charidx=0 ; charidx < "${#curr}" ; charidx++ )); do
+				charim1=$(( charidx - 1 ))
+				charip1=$(( charidx + 1 ))
+				curchar="${curr:${charidx}:1}"
 
-				if [[ -n "$( charoneof "${currchar}" '|' + - │ ─ )" ]]; then
-					n=_ ; [[ -n "${prev}" && -n "$( charoneof "${prev:${i}:1}" '|' +   │   ┼ ┤ ├   ┬ )" ]] && n=n
-					e=_ ; [[ -n "${curr}" && -n "$( charoneof "${curr:${j}:1}"     + -   ─ ┼ ┤   ┴ ┬ )" ]] && e=e
-					s=_ ; [[ -n "${next}" && -n "$( charoneof "${next:${i}:1}" '|' +   │   ┼ ┤ ├ ┴   )" ]] && s=s
-					w=_ ; [[ -n "${curr}" && -n "$( charoneof "${curr:${h}:1}"     + -   ─ ┼   ├ ┴ ┬ )" ]] && w=w
-					(( h < 0 )) && w=_
+				if [[ -n "$( charoneof "${curchar}" '|' + - │ ─ )" ]]; then
+					n=_ ; [[ -n "${prev}" && -n "$( charoneof "${prev:${charidx}:1}" '|' +   │   ┼ ┤ ├   ┬ )" ]] && n=n
+					e=_ ; [[ -n "${curr}" && -n "$( charoneof "${curr:${charip1}:1}"     + -   ─ ┼ ┤   ┴ ┬ )" ]] && e=e
+					s=_ ; [[ -n "${next}" && -n "$( charoneof "${next:${charidx}:1}" '|' +   │   ┼ ┤ ├ ┴   )" ]] && s=s
+					w=_ ; [[ -n "${curr}" && -n "$( charoneof "${curr:${charim1}:1}"     + -   ─ ┼   ├ ┴ ┬ )" ]] && w=w
+					(( charim1 < 0 )) && w=_ # don't allow negative indexing on curr line
 					boxcharsetvarname="${n}${e}${s}${w}"
 					boxcharset="${!boxcharsetvarname}"
 					boxchar="${boxcharset:${style}:1}"
 				else
-					boxchar="${currchar}"
+					boxchar="${curchar}"
 					for (( boxcharsetidx=0 ; boxcharsetidx < ${#boxcharsets[@]} ; boxcharsetidx++ )); do
 						boxcharset="${boxcharsets[${boxcharsetidx}]}"
 						if [[ "${boxchar}" == "${boxcharset:0:1}" ]]; then
@@ -98,17 +147,21 @@ function boxdraw() {
 				fi
 				dest+="${boxchar}"
 			done
-			echo "${marginchars}${dest}${marginchars}"
+			echo "${marginchars}${dest}"
 		else
 			echo
 		fi
 	done
 
 	if (( margin > 0 )); then
-		for (( i=0 ; i < margin ; i++ )); do echo; done
+		# print bottom margin:
+		for (( marginidx=0 ; marginidx < margin ; marginidx++ )); do echo; done
 	fi
 }
 
+# if first arg exactly equals one of the other args, print 1
+# else print nothing
+# ex. if [[ -n charoneof "${var}" + - * / ]]; then echo "${var} is an operator"; fi
 function charoneof() {
 	local char="$1"
 	shift

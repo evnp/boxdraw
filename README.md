@@ -1,15 +1,16 @@
 # boxdraw
 
-Convert simple ascii grid drawings to unicode 'box-drawing' characters:
+Convert simple ascii grid drawings to unicode ["box-drawing"](https://en.wikipedia.org/wiki/Box-drawing_character "wikipedia box-drawing characters") characters:
+
 
 ```sh
 npm install -g boxdraw
-./boxdraw <<-EOF          # PRESS ENTER
-> +-+                     # PASTE INPUT
+./boxdraw <<-EOF    # PRESS ENTER
+> +-+               # PASTE INPUT
 > | |
 > +-+
-> EOF                     # ENTER "EOF"
-┌─┐                       # PRESS ENTER
+> EOF               # ENTER "EOF"
+┌─┐                 # PRESS ENTER
 │ │
 └─┘
 ```
@@ -33,14 +34,14 @@ cd boxdraw
 
 ```sh
 cd boxdraw
-./boxdraw <<-EOF          # PRESS ENTER
-> +-+---+                 # PASTE INPUT
+./boxdraw <<-EOF    # PRESS ENTER
+> +-+---+           # PASTE INPUT
 > | |   |
 > +-+-+ |
 > | | | |
 > +-+-+-+
-> EOF                     # ENTER "EOF"
-                          # PRESS ENTER
+> EOF               # ENTER "EOF"
+                    # PRESS ENTER
 ┌─┬───┐
 │ │   │
 ├─┼─┐ │
