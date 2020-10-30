@@ -25,7 +25,7 @@ function boxdraw() {
 
 		  boxdraw 8 < inputfile.txt         # Draw with margin of 8 lines/spaces
 		  boxdraw 0 bold < inputfile.txt    # Draw with bold "box-drawing" characters
-		  boxdraw 2 double < inputfile.txt  # Draw with double-line "box-drawing" characters AND margin of 2 lines/spaces
+		  boxdraw 2 double < inputfile.txt  # Draw with double-line "box-drawing" characters AND margin
 
 		More information:
 

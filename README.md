@@ -2,18 +2,19 @@
 
 Convert simple ascii grid drawings to unicode ["box-drawing"](https://en.wikipedia.org/wiki/Box-drawing_character "wikipedia box-drawing characters") characters:
 
-
 ```sh
-npm install -g boxdraw
-./boxdraw <<-EOF    # PRESS ENTER
-> +-+               # PASTE INPUT
+npm install -g boxdraw  # installs "boxdraw" to npm bin, ensure it's on your path
+boxdraw <<-EOF          # PRESS ENTER
+> +-+                   # PASTE INPUT
 > | |
 > +-+
-> EOF               # ENTER "EOF"
-┌─┐                 # PRESS ENTER
+> EOF                   # ENTER "EOF"
+┌─┐                     # PRESS ENTER
 │ │
 └─┘
 ```
+
+Or,
 
 ```sh
 git clone git@github.com:evnp/boxdraw.git
@@ -23,25 +24,56 @@ npm run demo
 
 ![boxdraw demo](https://raw.githubusercontent.com/evnp/boxdraw/main/boxdraw.png "boxdraw demo")
 
-### Run on file input
+###  Usage
 
 ```sh
 cd boxdraw
-./boxdraw < inputfile.txt
+./boxdraw --help
+
+Usage:
+
+  boxdraw <<-EOF    # PRESS ENTER
+  > +-+             # PASTE INPUT
+  > +-+
+  > EOF             # ENTER "EOF"
+  ┌─┐               # PRESS ENTER
+  └─┘
+
+  OR
+
+  boxdraw < inputfile.txt
+
+Options:
+
+  boxdraw 8 < inputfile.txt         # Draw with margin of 8 lines/spaces
+  boxdraw 0 bold < inputfile.txt    # Draw with bold "box-drawing" characters
+  boxdraw 2 double < inputfile.txt  # Draw with double-line "box-drawing" characters AND margin
+
+More information:
+
+  https://github.com/evnp/boxdraw
+  https://en.wikipedia.org/wiki/Box-drawing_character
+
+```
+
+### Run on file input
+
+```sh
+boxdraw < inputfile.txt
 ```
 
 ### Run on pasted input
 
 ```sh
 cd boxdraw
-./boxdraw <<-EOF    # PRESS ENTER
-> +-+---+           # PASTE INPUT
+boxdraw <<-EOF    # PRESS ENTER
+> +-+---+         # PASTE INPUT
 > | |   |
 > +-+-+ |
 > | | | |
 > +-+-+-+
-> EOF               # ENTER "EOF"
-                    # PRESS ENTER
+> EOF             # ENTER "EOF"
+                  # PRESS ENTER
 ┌─┬───┐
 │ │   │
 ├─┼─┐ │
@@ -59,7 +91,7 @@ http://asciiflow.com/
 Margins:
 
 ```sh
-./boxdraw 3 <<-EOF
+boxdraw 3 <<-EOF
 > +-+---+
 > | |   |
 > +-+-+ |
@@ -84,7 +116,7 @@ Margins:
 Line style:
 
 ```sh
-./boxdraw 0 bold <<-EOF
+boxdraw 0 bold <<-EOF
 > +-+---+
 > | |   |
 > +-+-+ |
@@ -98,7 +130,7 @@ Line style:
 ┃ ┃ ┃ ┃
 ┗━┻━┻━┛
 
-./boxdraw 0 double <<-EOF
+boxdraw 0 double <<-EOF
 > +-+---+
 > | |   |
 > +-+-+ |
