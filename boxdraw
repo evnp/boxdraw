@@ -110,17 +110,16 @@ function boxdraw() {
 	# cardinal directions : north, south, east, west
 	local n e s w
 
-	# start loop (bash has no do-while):
-	curr=1
+	while # do-while loop : iterate over lines in stdin (loop condition at end)
 
-	while [[ -n "${next:-}" || -n "${curr:-}" ]]; do
-		[[ "${curr}" != 1 ]] && prev="${curr:-}"
+		prev="${curr:-}"
 		curr="${next:-}"
 
 		IFS= read -r next || true  # don't exit once we read empty line
 
 		if [[ -n "${curr}" ]]; then
 			dest=""
+
 			for (( charidx=0 ; charidx < "${#curr}" ; charidx++ )); do
 				charim1=$(( charidx - 1 ))
 				charip1=$(( charidx + 1 ))
@@ -137,6 +136,7 @@ function boxdraw() {
 					boxchar="${boxcharset:${style}:1}"
 				else
 					boxchar="${curchar}"
+
 					for (( boxcharsetidx=0 ; boxcharsetidx < ${#boxcharsets[@]} ; boxcharsetidx++ )); do
 						boxcharset="${boxcharsets[${boxcharsetidx}]}"
 						if [[ "${boxchar}" == "${boxcharset:0:1}" ]]; then
@@ -145,13 +145,16 @@ function boxdraw() {
 						fi
 					done
 				fi
+
 				dest+="${boxchar}"
 			done
 			echo "${marginchars}${dest}"
 		else
 			echo
 		fi
-	done
+
+	# do-while condition : iterate over lines in stdin
+	[[ -n "${next:-}" || -n "${curr:-}" ]]; do continue; done
 
 	if (( margin > 0 )); then
 		# print bottom margin:
