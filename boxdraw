@@ -33,7 +33,12 @@ function boxdraw() {
 		  https://en.wikipedia.org/wiki/Box-drawing_character
 
 		EOF
-		exit 1
+
+		if [[ " ${*} " == *" --help "* || " ${*} " == *" -h "* ]]; then
+			exit 0
+		else
+			exit 1
+		fi
 	fi
 
 	# first arg : margin (integer, optional) - define space around drawing
@@ -82,6 +87,7 @@ function boxdraw() {
 
 	# other box-drawing charset management vars:
 	local boxchar boxcharset boxcharsetidx boxcharsetvarname
+	local boxchars="${nesw}${nes_}${ne_w}${ne__}${n_sw}${n_s_}${n__w}${n___}${_esw}${_es_}${_e_w}${_e__}${__sw}${__s_}${___w}${____}"
 	local boxcharsets=(
 		"${nesw}"
 		"${nes_}"
@@ -125,25 +131,30 @@ function boxdraw() {
 				charip1=$(( charidx + 1 ))
 				curchar="${curr:${charidx}:1}"
 
-				if [[ -n "$( charoneof "${curchar}" '|' + - │ ─ )" ]]; then
-					n=_ ; [[ -n "${prev}" && -n "$( charoneof "${prev:${charidx}:1}" '|' +   │   ┼ ┤ ├   ┬ )" ]] && n=n
-					e=_ ; [[ -n "${curr}" && -n "$( charoneof "${curr:${charip1}:1}"     + -   ─ ┼ ┤   ┴ ┬ )" ]] && e=e
-					s=_ ; [[ -n "${next}" && -n "$( charoneof "${next:${charidx}:1}" '|' +   │   ┼ ┤ ├ ┴   )" ]] && s=s
-					w=_ ; [[ -n "${curr}" && -n "$( charoneof "${curr:${charim1}:1}"     + -   ─ ┼   ├ ┴ ┬ )" ]] && w=w
-					(( charim1 < 0 )) && w=_ # don't allow negative indexing on curr line
+				if [[ '+''-''─''|''│' == *"${curchar}"* ]]; then
+					n="${prev:${charidx}:1}"
+					e="${curr:${charip1}:1}"
+					s="${next:${charidx}:1}"
+					w="${curr:${charim1}:1}"; (( charim1 < 0 )) && w='' # don't allow negative indexing
+					if [[ -n "${n}" && '+''┼''|''│''┤''├''·''┬' == *"${n}"* ]]; then n=n; else n=_; fi
+					if [[ -n "${e}" && '+''┼''-''─''┤''·''┴''┬' == *"${e}"* ]]; then e=e; else e=_; fi
+					if [[ -n "${s}" && '+''┼''|''│''┤''├''┴''·' == *"${s}"* ]]; then s=s; else s=_; fi
+					if [[ -n "${w}" && '+''┼''-''─''·''├''┴''┬' == *"${w}"* ]]; then w=w; else w=_; fi
 					boxcharsetvarname="${n}${e}${s}${w}"
 					boxcharset="${!boxcharsetvarname}"
 					boxchar="${boxcharset:${style}:1}"
 				else
 					boxchar="${curchar}"
 
-					for (( boxcharsetidx=0 ; boxcharsetidx < ${#boxcharsets[@]} ; boxcharsetidx++ )); do
-						boxcharset="${boxcharsets[${boxcharsetidx}]}"
-						if [[ "${boxchar}" == "${boxcharset:0:1}" ]]; then
-							boxchar="${boxcharset:${style}:1}"
-							break
-						fi
-					done
+					if (( style )) && [[ "${boxchars}" == *"${boxchar}"* ]]; then
+						for (( boxcharsetidx=0 ; boxcharsetidx < ${#boxcharsets[@]} ; boxcharsetidx++ )); do
+							boxcharset="${boxcharsets[${boxcharsetidx}]}"
+							if [[ "${boxcharset}" == *"${boxchar}"* ]]; then
+								boxchar="${boxcharset:${style}:1}"
+								break
+							fi
+						done
+					fi
 				fi
 
 				dest+="${boxchar}"
@@ -160,25 +171,6 @@ function boxdraw() {
 		# print bottom margin:
 		for (( marginidx=0 ; marginidx < margin ; marginidx++ )); do echo; done
 	fi
-}
-
-# if first arg exactly equals one of the other args, print 1
-# else print nothing
-# ex. if [[ -n charoneof "${var}" + - * / ]]; then echo "${var} is an operator"; fi
-function charoneof() {
-	local char="$1"
-	shift
-	local oneof=( "$@" )
-	local i
-
-	for (( i=0 ; i < "${#oneof[@]}" ; i++ )); do
-		if [[ "${char}" == "${oneof[${i}]}" ]]; then
-			echo 1
-			break
-		fi
-	done
-
-	return 0
 }
 
 boxdraw "$@"
