@@ -1,15 +1,24 @@
 {
   "name": "boxdraw",
   "version": "1.0.5",
-  "description": "convert simple ascii grid drawings to unicode 'box-drawing' characters",
+  "description": "Convert ascii grid drawings into unicode 'box-drawing' characters",
   "main": "boxdraw",
   "bin": "boxdraw",
   "scripts": {
-    "demo": "run() { ./boxdraw ${1:-8} ${2} < demo.txt; }; run",
+    "demo": "run() { ./boxdraw \"${1:-8}\" \"${2}\" < test-in.txt; }; run",
+    "test": "run() { test \"$( ./boxdraw 8 double < test-in.txt )\" = \"$( cat test-out.txt )\"; }; run",
+    "testw": "npm test && fswatch -0 -o -r . | xargs -0 -n1 npm test",
+    "lint": "shellcheck boxdraw",
     "help": "./boxdraw --help"
   },
   "homepage": "https://github.com/evnp/boxdraw",
-  "repository": "git://github.com/evnp/boxdraw.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/evnp/boxdraw.git"
+  },
   "author": "Evan Purcer <evanpurcer@gmail.com> (http://evnp.ca)",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "shellcheck": "0.4.4"
+  }
 }
