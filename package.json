@@ -1,6 +1,6 @@
 {
   "name": "boxdraw",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Convert ascii grid drawings into unicode 'box-drawing' characters",
   "main": "boxdraw",
   "bin": "boxdraw",
