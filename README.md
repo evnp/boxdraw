@@ -1,6 +1,6 @@
 # boxdraw
 
-Convert ascii grid drawings into unicode ["box-drawing"](https://en.wikipedia.org/wiki/Box-drawing_character "wikipedia box-drawing characters") characters:
+Convert ascii grid drawings into unicode ["box-drawing"](https://en.wikipedia.org/wiki/Box-drawing_character "wikipedia box-drawing characters") characters.
 
 [![tests](https://github.com/evnp/boxdraw/workflows/tests/badge.svg)](https://github.com/evnp/boxdraw/actions)
 [![shellcheck](https://github.com/evnp/boxdraw/workflows/shellcheck/badge.svg)](https://github.com/evnp/boxdraw/actions)
@@ -29,8 +29,15 @@ Or,
 
 ```sh
 git clone git@github.com:evnp/boxdraw.git
+cp ./boxdraw/boxdraw ~/bin  # or /usr/local/bin, or any other dir on $PATH
+
+# Or run boxdraw script directly from source:
 cd boxdraw
-npm run demo
+./boxdraw < input.txt
+
+# Run 'demo' to get a sense of expected input/output:
+cat test-in.txt  # input
+npm run demo     # output
 ```
 
 ![boxdraw demo](https://raw.githubusercontent.com/evnp/boxdraw/main/boxdraw.png "boxdraw demo")
@@ -157,17 +164,22 @@ boxdraw 0 double <<-EOF
 
 Tests
 -------------
+
 Run once:
+
 ```sh
 npm install
 npm test
 ```
+
 Use `fswatch` to re-run tests on file changes:
+
 ```sh
 brew install fswatch
 npm install
 npm run testw
 ```
+
 Non-OSX: replace `brew install fswatch` with package manager of choice (see [fswatch docs](https://github.com/emcrisostomo/fswatch#getting-fswatch))
 
 License
