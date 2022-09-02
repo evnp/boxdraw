@@ -121,6 +121,7 @@ function boxdraw() {
 		prev="${curr:-}"
 		curr="${next:-}"
 
+		# this is a clever test!
 		IFS= read -r next || true  # don't exit once we read empty line
 
 		if [[ -n "${curr}" ]]; then
