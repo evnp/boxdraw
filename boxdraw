@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # a new comment
+# another useless comment
 
 set -euo pipefail
 
