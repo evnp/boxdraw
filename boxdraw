@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# a new comment
+
 set -euo pipefail
 
 function boxdraw() {
